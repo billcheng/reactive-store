@@ -119,6 +119,41 @@
           }
         }
       }
+    },
+    "reactive-store": {
+      "projectType": "library",
+      "root": "projects/reactive-store",
+      "sourceRoot": "projects/reactive-store/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-ng-packagr:build",
+          "options": {
+            "tsConfig": "projects/reactive-store/tsconfig.lib.json",
+            "project": "projects/reactive-store/ng-package.json"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/reactive-store/src/test.ts",
+            "tsConfig": "projects/reactive-store/tsconfig.spec.json",
+            "karmaConfig": "projects/reactive-store/karma.conf.js"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "projects/reactive-store/tsconfig.lib.json",
+              "projects/reactive-store/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        }
+      }
     }},
   "defaultProject": "reactive-store"
 }

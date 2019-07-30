@@ -17,7 +17,15 @@
     "lib": [
       "es2018",
       "dom"
-    ]
+    ],
+    "paths": {
+      "reactive-store": [
+        "dist/reactive-store"
+      ],
+      "reactive-store/*": [
+        "dist/reactive-store/*"
+      ]
+    }
   },
   "angularCompilerOptions": {
     "fullTemplateTypeCheck": true,

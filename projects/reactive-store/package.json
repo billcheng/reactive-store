@@ -1,0 +1,7 @@
+{
+  "name": "reactive-store",
+  "version": "8.0.0",
+  "peerDependencies": {
+    "rxjs": "~6.4.0"
+  }
+}

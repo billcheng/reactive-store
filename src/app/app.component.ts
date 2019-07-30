@@ -1,4 +1,7 @@
 import { Component } from '@angular/core';
+import { MyStoreService, setBusy } from './my-store.service';
+import { Observable } from 'rxjs';
+import { enableConsoleLog } from 'projects/reactive-store/src/public-api';
 
 @Component({
   selector: 'app-root',
@@ -6,5 +9,16 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'reactive-store';
+
+  busy$: Observable<boolean>;
+
+  constructor(private store: MyStoreService) {
+    enableConsoleLog();
+    this.busy$ = store.select(p => p.busy);
+  }
+
+  handleBlog() {
+    this.store.dispatch(setBusy(!this.store.state.busy));
+  }
+
 }
