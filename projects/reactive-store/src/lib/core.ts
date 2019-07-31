@@ -50,6 +50,8 @@ export function removeReducer(key: string) {
 }
 
 export function initialState<R>(key: string, state: R) {
+    if (states$.value[key])
+        console.warn(`${key} already exists in current state`, state);
     if (storageStrategy !== StorageStrategy.LocalStorage || !states$.value[key]) {
         states$.next({ ...states$.value, [key]: state });
     }

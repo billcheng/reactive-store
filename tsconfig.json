@@ -19,7 +19,7 @@
       "dom"
     ],
     "paths": {
-      "reactive-store": [
+      "reactive-store-app": [
         "dist/reactive-store"
       ],
       "reactive-store/*": [
