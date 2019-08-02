@@ -18,6 +18,7 @@ export class AppComponent {
   }
 
   handleBlog() {
+    console.log(this.store.state);
     this.store.dispatch(setBusy(!this.store.state.busy));
   }
 

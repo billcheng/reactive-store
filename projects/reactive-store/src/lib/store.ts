@@ -1,33 +1,29 @@
-import { Observable } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 import { map, distinctUntilChanged } from 'rxjs/operators';
-import { addReducer, states$, dispatchAction, Action, ReducerFunc } from './core';
+import { addReducer, dispatchAction, Action } from './core';
 import { addSideEffect, SideEffectFunc, SideEffects, Predicate } from './effects-core';
 import { dispatchStoreEvent } from './core-hook';
-import { initialState as setInitialState } from './core';
 
 export class Store<T extends Object> {
 
-    private __rx_store_key__: string;
     private __rx_store_initial_state__: any;
     private __rx_store_methods__: { method: (state: any, payload: any) => any, type: string }[];
     private __rx_store_side_effects__: SideEffects;
+
+    private state$: BehaviorSubject<T>;
+    private reducerMap: Map<string, Function>;
 
     constructor() {
         const initialState = this.__rx_store_initial_state__;
         if (typeof initialState !== 'object')
             throw new Error('No initial state found');
 
-        setInitialState(this.__rx_store_key__, initialState);
+        this.state$ = new BehaviorSubject(initialState);
         dispatchStoreEvent("INITIAL-STATE", { state: initialState });
 
         if (this.__rx_store_methods__) {
-            const map = new Map(this.__rx_store_methods__.map(({ type, method }) => ([type, method.bind(this)])));
-            this.addReducer((state, action: Action<any>) => {
-                const method = map.get(action.type);
-                if (method) {
-                    return method(state, action.payload);
-                }
-            });
+            this.reducerMap = new Map(this.__rx_store_methods__.map(({ type, method }) => ([type, method.bind(this)])));
+            addReducer(this.processReducer.bind(this));
         }
 
         if (this.__rx_store_side_effects__) {
@@ -35,9 +31,14 @@ export class Store<T extends Object> {
         }
     }
 
-    protected addReducer<R>(reducer: ReducerFunc<T, R>) {
-        dispatchStoreEvent("ADD-REDUCER", reducer);
-        addReducer(this.__rx_store_key__, reducer.bind(this));
+    private processReducer(action: Action<any>) {
+        const reducer = this.reducerMap.get(action.type);
+        if (reducer) {
+            const current = this.state$.value;
+            const future = reducer(current, action.payload);
+            if (future !== current)
+                this.state$.next(future);
+        }
     }
 
     protected addSideEffect(actionType: string, sideEffect: SideEffectFunc<T>) {
@@ -50,18 +51,16 @@ export class Store<T extends Object> {
     }
 
     public select<P>(predicate: Predicate<T, P>): Observable<P> {
-        return states$
+        return this.state$
             .pipe(
-                map(p => p[this.__rx_store_key__]),
                 map(predicate),
                 distinctUntilChanged()
             );
     }
 
     public map<P>(predicate: Predicate<T, P>): Observable<P> {
-        return states$
+        return this.state$
             .pipe(
-                map(p => p[this.__rx_store_key__]),
                 map(predicate)
             );
     }
@@ -91,10 +90,6 @@ export class Store<T extends Object> {
     }
 
     public get state(): T {
-        return states$.value[this.__rx_store_key__] || {};
-    }
-
-    protected get states(): any {
-        return states$.value || {};
+        return this.state$.value;
     }
 }

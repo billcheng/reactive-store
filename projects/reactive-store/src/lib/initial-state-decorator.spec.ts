@@ -10,7 +10,7 @@ describe('initial-state-decorator', () => {
         expect(target.prototype.__rx_store_initial_state__).toEqual({ test: true });
     });
 
-    it('should store class name as the key', () => {
+    xit('should store class name as the key', () => {
         const target = () => { };
         target.prototype = {};
 

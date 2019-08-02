@@ -1,4 +1,4 @@
-import { states$, clear, setStorageStrategy, StorageStrategy, reducers } from './core';
+import { reducers } from './core';
 import { InitialState } from './initial-state-decorator';
 import { Store } from './store';
 import { createAction } from './createAction';
@@ -29,17 +29,16 @@ describe('Store', () => {
     let test: Test;
 
     beforeEach(() => {
-        clear();
         sideEffects.clear();
         test = new Test();
     });
 
     it('should set the initial state as the @InitialState', () => {
-        expect(states$.value).toEqual({ Test: { busy: true } });
+        expect(test.state).toEqual({ busy: true });
     });
 
     it('should add a reducer', () => {
-        expect([...reducers.keys()]).toEqual(['Test']);
+        expect([...(test as any).reducerMap.keys()]).toEqual(['action1']);
     });
 
     it('should add an effect', () => {

@@ -1,10 +1,9 @@
 import { addSideEffect, sideEffects, removeSideEffect } from './effects-core';
-import { queue_extension, clear } from './core';
+import { queue_extension } from './core';
 import { fakeAsync, tick } from '@angular/core/testing';
 
 describe('effects-core', () => {
     beforeEach(() => {
-        clear();
         sideEffects.clear();
     });
 
